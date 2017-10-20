@@ -1,0 +1,19 @@
+Install jquery with npm
+
+npm install jquery --save
+Add typings
+
+npm install --save-dev @types/jquery
+Add scripts to angular-cli.json
+
+"apps": [{
+  ...
+  "scripts": [
+    "../node_modules/jquery/dist/jquery.min.js",
+  ],
+  ...
+}]
+Build project and serve
+
+ng build
+Hope this helps! Enjoy coding

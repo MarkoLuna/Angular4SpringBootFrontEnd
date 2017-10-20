@@ -1,0 +1,62 @@
+<div class="jumbotron">
+  <h1 class="display-5">{{ title }}</h1>
+  <p class="lead">Spring Boot MVC, Angular 4, Bootstrap 4 Application 
+  </p>
+</div>
+
+  <h5 class="display-4">Users</h5>
+  <a class="btn btn-lg btn-success" href="#" role="button" (click)="newUser()">New User</a>
+
+  <div class="alert alert-dismissible fade show" role="alert" *ngIf="visibleAlert"
+      [ngClass]="{'alert-success': success, 'alert-info': info, 'alert-warning': warning, 'alert-danger': danger}">
+      {{ message }}
+  </div>
+
+  <table class="table table-hover">
+    <thead class="thead-default">
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Salary</th>
+        <th>Delete</th>
+        <th>Update</th>
+        <th>View</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of userList ">
+        <th scope="row">{{ row.id }}</th>
+        <td>{{ row.name }}</td>
+        <td>{{ row.age }}</td>
+        <td>{{ row.salary | currency :'USD':true}}</td>
+        <td><i class="fa fa-trash" aria-hidden="true" (click)="deleteUser(row)">Detele</i></td>
+        <td><i class="fa fa-pencil" aria-hidden="true" (click)="viewUser(row)">Update</i></td>
+        <td><i class="fa fa-eye" aria-hidden="true" (click)="viewUser(row)"></i>View</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <form *ngIf="user">
+    <div class="form-group">
+      <label for="id">ID</label>
+      <input type="text" disabled value="{{user.id}}" class="form-control" id="id" aria-describedby="Id generated" placeholder="auto generated">
+    </div>
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" [(ngModel)]="user.name" [ngModelOptions]="{standalone: true}" class="form-control" id="name" placeholder="Name">
+    </div>
+    <div class="form-group">
+      <label for="age">Age</label>
+      <input type="number" [(ngModel)]="user.age" [ngModelOptions]="{standalone: true}" class="form-control" id="age" placeholder="Age">
+    </div>
+    <div class="form-group">
+      <label for="salary">Salary</label>
+      <input type="number" [(ngModel)]="user.salary" [ngModelOptions]="{standalone: true}" class="form-control" id="salary" placeholder="Salary">
+    </div>
+   
+    <button class="btn btn-primary" (click)="save()">Submit</button>
+    <button class="btn btn-secondary" (click)="cancel()">Cancel</button>
+  </form>
+
+  

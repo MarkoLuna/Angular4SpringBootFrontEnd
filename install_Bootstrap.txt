@@ -1,0 +1,18 @@
+npm install --save bootstrap
+
+after inside angular-cli.json (inside project root folder) find styles and add a bootstrap css like this:
+
+"styles": [
+   "../node_modules/bootstrap/dist/css/bootstrap.min.css",
+   "styles.css"
+],
+
+---------------------------------------------------------------
+otra forma 
+
+npm install --save bootstrap@4.0.0-alpha.6 font-awesome
+Now that we have the dependencies in place, we can tell Angular CLI that it needs to load these styles by opening the file
+src/styles.css
+and adding the following two statements.
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import "~font-awesome/css/font-awesome.css";
