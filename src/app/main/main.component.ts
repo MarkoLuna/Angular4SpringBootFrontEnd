@@ -75,25 +75,6 @@ export class MainComponent implements OnInit {
     });
   }
 
-  deleteUser2() {
-    this.http.delete(this.baseUrl + '59ec07b2310fd20608c9b493',{
-      headers: new HttpHeaders().set(this.AUTH_TOKEN_HEADER, this.getJWT())
-    }).subscribe((data: any) => {
-      // this.obtainAllUsers();
-      this.showAlert('User ' + '59ec07b2310fd20608c9b493' + ' Deleted successfully', Alerts.ALERT_TYPE_INFO);
-    });
-  }
-
-  viewUser2() {
-    this.http.get(this.baseUrl + '59ec07b2310fd20608c9b493', {
-      headers: new HttpHeaders().set(this.AUTH_TOKEN_HEADER, this.getJWT()), //.set('Content-Type', 'application/json')  'application/json', // .replace(this.TOKEN_PREFIX, '')
-      observe: 'response',
-    }).subscribe((data) => {
-      console.log(data);
-      // this.user = data;
-    });
-  }
-
   createUser() {
     console.log('createUser');
 
