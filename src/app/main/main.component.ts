@@ -7,6 +7,11 @@ import { RequestOptionsArgs } from '@angular/http';
 
 import { HttpHeaders, HttpResponseBase, HttpErrorResponse } from '@angular/common/http';
 
+import { Http, Response, Headers } from '@angular/http';
+import 'rxjs/Rx';
+
+declare var $:any;
+
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -15,10 +20,13 @@ import { HttpHeaders, HttpResponseBase, HttpErrorResponse } from '@angular/commo
 export class MainComponent implements OnInit {
 
   title = 'Spring Boot Rest Api App ';
-  baseUrl = 'http://localhost:8080/SpringBootRestApi/api/user/';
-  loginUrl = 'http://localhost:8080/SpringBootRestApi/login';
+  baseUrl = 'http://127.0.0.1:8080/SpringBootRestApi/api/user/';
+  loginUrl = 'http://127.0.0.1:8080/SpringBootRestApi/login';
   userList: User[];
   user: User;
+
+  AUTH_TOKEN_HEADER : string = 'Authorization';
+  TOKEN_PREFIX : string = 'Bearer';
 
   visibleAlert: Boolean = false;
   message: String = '';
@@ -48,18 +56,41 @@ export class MainComponent implements OnInit {
   login() {
     const credentials = {username: 'admin', password: 'password'};
     this.http.post(this.loginUrl, credentials, {
-      headers: new HttpHeaders().set('Content-Type', 'text/plain'), // 'application/json'
-        // .set('Content-Type', 'application/x-www-form-urlencoded'),
+      headers: new HttpHeaders().set('Content-Type', 'text/plain'),
         observe: 'response'
     }).subscribe((data) => {
-      console.log(data);
-      console.log(data.headers.get('authorization'));
-      console.log(data.headers.get('cache-control'));
-      console.log(data.headers.keys());
+      this.setJWT(data.headers.get(this.AUTH_TOKEN_HEADER));
+
+       if(this.getJWT() !== ''){
+        setTimeout(
+          () => this.obtainAllUsers()
+        , 3000);
+      }else{
+        console.error('NO '+this.AUTH_TOKEN_HEADER+' token found');
+      }
     }, (err: HttpErrorResponse) => {
       console.log('Something went wrong! on login');
       console.log(err);
       console.log(err.message);
+    });
+  }
+
+  deleteUser2() {
+    this.http.delete(this.baseUrl + '59ec07b2310fd20608c9b493',{
+      headers: new HttpHeaders().set(this.AUTH_TOKEN_HEADER, this.getJWT())
+    }).subscribe((data: any) => {
+      // this.obtainAllUsers();
+      this.showAlert('User ' + '59ec07b2310fd20608c9b493' + ' Deleted successfully', Alerts.ALERT_TYPE_INFO);
+    });
+  }
+
+  viewUser2() {
+    this.http.get(this.baseUrl + '59ec07b2310fd20608c9b493', {
+      headers: new HttpHeaders().set(this.AUTH_TOKEN_HEADER, this.getJWT()), //.set('Content-Type', 'application/json')  'application/json', // .replace(this.TOKEN_PREFIX, '')
+      observe: 'response',
+    }).subscribe((data) => {
+      console.log(data);
+      // this.user = data;
     });
   }
 
@@ -74,7 +105,21 @@ export class MainComponent implements OnInit {
   }
 
   obtainAllUsers() {
-    this.http.get(this.baseUrl).subscribe((data: User[]) => {
+    if(this.getJWT() === ''){
+      console.log('Authenticating User');
+      this.login();
+      return;
+    }
+
+    var data = {
+        headers: new HttpHeaders()
+          .set(this.AUTH_TOKEN_HEADER, this.getJWT())
+          .set('Content-Type', 'application/json')
+          .set('Accept', 'application/json') 
+        ,withCredentials: true
+      };
+    this.http.get(this.baseUrl, data).subscribe((data: User[]) => {
+      // console.log(data);
       this.userList = data;
     }, (err: HttpResponseBase) => {
       // console.log(err);
@@ -131,4 +176,13 @@ export class MainComponent implements OnInit {
     }, 5000);
   }
 
+  setJWT(jwt){
+    localStorage.setItem(this.AUTH_TOKEN_HEADER, jwt);
+  }
+
+  getJWT(){
+    if(localStorage.getItem(this.AUTH_TOKEN_HEADER)!=null)
+      return localStorage.getItem(this.AUTH_TOKEN_HEADER);
+    return '';
+  }
 }

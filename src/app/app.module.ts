@@ -9,6 +9,8 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { AboutComponent } from './about/about.component';
 import { MainComponent } from './main/main.component';
 
+import { HttpModule } from '@angular/http';
+
 const appRoutes: Routes = [
   { path: 'home', component: MainComponent },
   { path: 'about', component: AboutComponent },
@@ -29,7 +31,9 @@ const appRoutes: Routes = [
       appRoutes,
       { enableTracing: true } // <-- debugging purposes only
     ),
+    HttpModule,
     FormsModule
+    
   ],
   providers: [],
   bootstrap: [AppComponent]
