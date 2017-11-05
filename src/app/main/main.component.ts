@@ -1,5 +1,6 @@
 import { User } from './../user';
 import { Alerts } from './../alerts';
+import { AuthJWTManagement } from './../AuthJWTManagement'
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { RequestOptions } from '@angular/http';
@@ -9,6 +10,9 @@ import { HttpHeaders, HttpResponseBase, HttpErrorResponse } from '@angular/commo
 
 import { Http, Response, Headers } from '@angular/http';
 import 'rxjs/Rx';
+
+import { AuthJWTManagementService } from './../auth-jwtmanagement.service';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 declare var $:any;
 
@@ -21,12 +25,8 @@ export class MainComponent implements OnInit {
 
   title = 'Spring Boot Rest Api App ';
   baseUrl = 'http://127.0.0.1:8080/SpringBootRestApi/api/user/';
-  loginUrl = 'http://127.0.0.1:8080/SpringBootRestApi/login';
   userList: User[];
   user: User;
-
-  AUTH_TOKEN_HEADER : string = 'Authorization';
-  TOKEN_PREFIX : string = 'Bearer';
 
   visibleAlert: Boolean = false;
   message: String = '';
@@ -35,7 +35,10 @@ export class MainComponent implements OnInit {
   warning: Boolean = false;
   danger: Boolean = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private route: ActivatedRoute,
+    private router: Router,
+    private http: HttpClient, 
+    private authManagement: AuthJWTManagementService ) {}
 
   ngOnInit(): void {
     this.obtainAllUsers();
@@ -43,6 +46,13 @@ export class MainComponent implements OnInit {
 
   cancel() {
     this.user = null;
+  }
+
+  checkAuth(){
+    if(!this.authManagement.isAuthenticated() ){
+      console.log('UnAuthenticated User');
+      this.router.navigate(['/login']);
+    }
   }
 
   save() {
@@ -53,26 +63,26 @@ export class MainComponent implements OnInit {
     }
   }
 
-  login() {
-    const credentials = {username: 'admin', password: 'password'};
-    this.http.post(this.loginUrl, credentials, {
-      headers: new HttpHeaders().set('Content-Type', 'text/plain'),
-        observe: 'response'
-    }).subscribe((data) => {
-      this.setJWT(data.headers.get(this.AUTH_TOKEN_HEADER));
+  obtainAllUsers() {
+    this.checkAuth();
 
-       if(this.getJWT() !== ''){
-        setTimeout(
-          () => this.obtainAllUsers()
-        , 3000);
-      }else{
-        console.error('NO '+this.AUTH_TOKEN_HEADER+' token found');
-      }
-    }, (err: HttpErrorResponse) => {
-      console.log('Something went wrong! on login');
+    var data = {
+        headers: new HttpHeaders()
+          .set(this.authManagement.AUTH_TOKEN_HEADER, this.authManagement.getToken())
+          .set('Content-Type', 'application/json')
+          .set('Accept', 'application/json') 
+        ,withCredentials: true
+      };
+    this.http.get(this.baseUrl, data).subscribe((data: User[]) => {
+      // console.log(data);
+      this.userList = data;
+    }, (err: HttpResponseBase) => {
       console.log(err);
-      console.log(err.message);
     });
+  }
+
+  newUser() {
+    this.user = new User();
   }
 
   createUser() {
@@ -83,36 +93,6 @@ export class MainComponent implements OnInit {
       this.cancel();
       this.showAlert('User ' + data.name + ' Created successfully', Alerts.ALERT_TYPE_SUCCESS);
     });
-  }
-
-  obtainAllUsers() {
-    if(this.getJWT() === ''){
-      console.log('Authenticating User');
-      this.login();
-      return;
-    }
-
-    var data = {
-        headers: new HttpHeaders()
-          .set(this.AUTH_TOKEN_HEADER, this.getJWT())
-          .set('Content-Type', 'application/json')
-          .set('Accept', 'application/json') 
-        ,withCredentials: true
-      };
-    this.http.get(this.baseUrl, data).subscribe((data: User[]) => {
-      // console.log(data);
-      this.userList = data;
-    }, (err: HttpResponseBase) => {
-      // console.log(err);
-      if (err.status === 403) {
-        console.log('Authenticating User');
-        this.login();
-      }
-    });
-  }
-
-  newUser() {
-    this.user = new User();
   }
 
   deleteUser(user) {
@@ -132,7 +112,17 @@ export class MainComponent implements OnInit {
   }
 
   viewUser(user) {
-    this.http.get(this.baseUrl + user.id).subscribe((data: User) => {
+    this.checkAuth();
+    
+    var data = {
+        headers: new HttpHeaders()
+          .set(this.authManagement.AUTH_TOKEN_HEADER, this.authManagement.getToken())
+          .set('Content-Type', 'application/json')
+          .set('Accept', 'application/json') 
+        ,withCredentials: true
+      };
+
+    this.http.get(this.baseUrl + user.id, data).subscribe((data: User) => {
       console.log(data);
       this.user = data;
     });
@@ -155,15 +145,5 @@ export class MainComponent implements OnInit {
     setTimeout(() => {
       this.visibleAlert = false;
     }, 5000);
-  }
-
-  setJWT(jwt){
-    localStorage.setItem(this.AUTH_TOKEN_HEADER, jwt);
-  }
-
-  getJWT(){
-    if(localStorage.getItem(this.AUTH_TOKEN_HEADER)!=null)
-      return localStorage.getItem(this.AUTH_TOKEN_HEADER);
-    return '';
   }
 }

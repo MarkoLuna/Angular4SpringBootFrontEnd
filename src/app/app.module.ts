@@ -11,9 +11,13 @@ import { MainComponent } from './main/main.component';
 
 import { HttpModule } from '@angular/http';
 
+import { AuthJWTManagementService } from './auth-jwtmanagement.service';
+import { AuthComponent } from './auth/auth.component'
+
 const appRoutes: Routes = [
   { path: 'home', component: MainComponent },
   { path: 'about', component: AboutComponent },
+  { path: 'login', component: AuthComponent },
   { path: '**', component: PageNotFoundComponent }
 ];
 
@@ -22,7 +26,9 @@ const appRoutes: Routes = [
     AppComponent,
     PageNotFoundComponent,
     AboutComponent,
-    MainComponent
+    MainComponent,
+    AuthComponent
+    
   ],
   imports: [
     BrowserModule,
@@ -35,7 +41,7 @@ const appRoutes: Routes = [
     FormsModule
     
   ],
-  providers: [],
+  providers: [AuthJWTManagementService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
