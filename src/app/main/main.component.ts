@@ -1,6 +1,5 @@
 import { User } from './../user';
 import { Alerts } from './../alerts';
-import { AuthJWTManagement } from './../AuthJWTManagement'
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { RequestOptions } from '@angular/http';

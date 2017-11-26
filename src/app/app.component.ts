@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 import { AuthJWTManagementService } from './auth-jwtmanagement.service';
 
@@ -8,15 +9,22 @@ import { AuthJWTManagementService } from './auth-jwtmanagement.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  user : String =  'User Api Application';
-  constructor(private authManagement: AuthJWTManagementService){
-    if(this.authManagement.isAuthenticated() ){
+  user: String =  'User Api Application';
+  authenticated = false;
+  constructor(
+    private authManagement: AuthJWTManagementService,
+    private router: Router) {
+
+    if (this.authManagement.isAuthenticated() ) {
       // console.log('User Authenticated');
       this.user = this.authManagement.getUser().username;
-    }else{
+    }else {
       this.user = 'User Api Application';
     }
   }
 
-
+  logout() {
+    this.authManagement.logout();
+    this.router.navigate(['/login']);
+  }
 }

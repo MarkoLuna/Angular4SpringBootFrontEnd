@@ -6,32 +6,32 @@ import { HttpHeaders, HttpResponseBase, HttpErrorResponse } from '@angular/commo
 @Injectable()
 export class AuthJWTManagementService {
 
-  AUTH_TOKEN_HEADER : string = 'Authorization';
-  TOKEN_PREFIX : string = 'Bearer';
-  loginUrl = 'http://127.0.0.1:8080/SpringBootRestApi/login';
-  authenticate : boolean = false;
+  AUTH_TOKEN_HEADER: string = 'Authorization';
+  TOKEN_PREFIX: string = 'Bearer';
+  loginUrl: string = 'http://127.0.0.1:8080/SpringBootRestApi/login';
+  authenticate: boolean = false;
 
   user = {username: 'admin', password: 'password'};
 
   constructor(private http: HttpClient) {
-    if(this.getToken() !== ''){
+    if (this.getToken() !== '') {
       this.authenticate = true;
     }
   }
 
   auth(credentials) {
-    var promise = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
       this.http.post(this.loginUrl, credentials, {
         headers: new HttpHeaders().set('Content-Type', 'text/plain'),
           observe: 'response'
       }).subscribe((data) => {
           this.setToken(data.headers.get(this.AUTH_TOKEN_HEADER));
-  
-          if(this.getToken() !== ''){
+
+          if (this.getToken() !== '') {
               this.authenticate = true;
-          }else{
+          }else {
               this.authenticate = false;
-              console.error('NO '+this.AUTH_TOKEN_HEADER+' token found');
+              console.error('NO ' + this.AUTH_TOKEN_HEADER + ' token found');
           }
           this.user = credentials;
           resolve();
@@ -46,20 +46,29 @@ export class AuthJWTManagementService {
     return promise;
   }
 
-  isAuthenticated(){
+  logout() {
+    if (this.isAuthenticated() ) {
+      localStorage.clear();
+      this.user = {username: 'User Api Application', password: ''};
+      this.authenticate = false;
+    }
+  }
+
+  isAuthenticated() {
       return this.authenticate && this.getToken() !== '';
   }
-  setToken(token){
+  setToken(token) {
       localStorage.setItem(this.AUTH_TOKEN_HEADER, token);
   }
 
-  getToken(){
-      if(localStorage.getItem(this.AUTH_TOKEN_HEADER)!=null)
-          return localStorage.getItem(this.AUTH_TOKEN_HEADER);
+  getToken() {
+      if (localStorage.getItem(this.AUTH_TOKEN_HEADER) != null) {
+        return localStorage.getItem(this.AUTH_TOKEN_HEADER);
+      }
       return '';
   }
 
-  getUser(){
+  getUser() {
     return this.user;
   }
 }

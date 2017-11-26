@@ -10,8 +10,10 @@ import { AuthJWTManagementService } from './../auth-jwtmanagement.service';
 })
 export class AuthComponent implements OnInit {
 
-  user : String = '';
-  password : String = '';
+  user: String = '';
+  password: String = '';
+  errors: boolean = false;
+  error: string = '';
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -20,35 +22,35 @@ export class AuthComponent implements OnInit {
   ngOnInit() {
   }
 
-  login(event){
+  login(event) {
     event.preventDefault();
-    console.log(event);
 
-    console.log(this.user);
-    console.log(this.password);  
-
-    if(this.user === '' || this.password === ''){
-      console.log("completa los campos");
+    if (this.user === '' || this.password === '') {
+      console.log('completa los campos');
+      this.error = 'completa los campos';
+      this.errors = true;
       return;
     }
+    this.errors = false;
 
     // username: 'admin', password: 'password'
     const credentials = {username: this.user, password: this.password};
 
-    this.authManagement.auth(credentials).then(()=>{
-      if(this.authManagement.isAuthenticated()){
+    this.authManagement.auth(credentials).then(() => {
+      if (this.authManagement.isAuthenticated()) {
         this.goToUserPage();
-      }else{
-        console.log("credenciales erroneas");
+      }else {
+        console.log('credenciales erroneas');
       }
-      
-    }).catch((data)=>{
-      console.log("ha sucedido un error");
+    }).catch((data) => {
+      console.log('credenciales erroneas');
       console.log(data);
+      this.error = 'credenciales erroneas';
+      this.errors = true;
     });
   }
 
-  goToUserPage(){
+  goToUserPage() {
     this.router.navigate(['/home']);
   }
 }
