@@ -36,11 +36,9 @@ export class AuthJWTManagementService {
           this.user = credentials;
           resolve();
       }, (err: HttpErrorResponse) => {
-          this.authenticate = false;
-        console.log('Something went wrong! on login');
+        this.authenticate = false;
         console.log(err);
-        console.log(err.message);
-        reject(err.message);
+        reject(err);
       });
     });
     return promise;

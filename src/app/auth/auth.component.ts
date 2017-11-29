@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
@@ -42,11 +43,12 @@ export class AuthComponent implements OnInit {
       }else {
         console.log('credenciales erroneas');
       }
-    }).catch((data) => {
-      console.log('credenciales erroneas');
-      console.log(data);
-      this.error = 'credenciales erroneas';
-      this.errors = true;
+    }).catch((data: HttpErrorResponse) => {
+      const error = JSON.parse(data.error);
+      if (error.error === 'Unauthorized' || error.status === 401) {
+        this.error = error.message;
+        this.errors = true;
+      }
     });
   }
 
