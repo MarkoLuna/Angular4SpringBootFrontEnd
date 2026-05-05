@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Http, Response, Headers } from '@angular/http';
-import { HttpHeaders, HttpResponseBase, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthJWTManagementService {
 
   AUTH_TOKEN_HEADER: string = 'Authorization';
@@ -19,33 +19,36 @@ export class AuthJWTManagementService {
     }
   }
 
-  auth(credentials) {
-    const promise = new Promise((resolve, reject) => {
-      this.http.post(this.loginUrl, credentials, {
+  auth(credentials: any) {
+    const promise = new Promise<void>((resolve, reject) => {
+      this.http.post<any>(this.loginUrl, credentials, {
         headers: new HttpHeaders().set('Content-Type', 'text/plain'),
-          observe: 'response'
-      }).subscribe((data) => {
+        observe: 'response'
+      }).subscribe({
+        next: (data) => {
           this.setToken(data.headers.get(this.AUTH_TOKEN_HEADER));
 
           if (this.getToken() !== '') {
               this.authenticate = true;
-          }else {
+          } else {
               this.authenticate = false;
               console.error('NO ' + this.AUTH_TOKEN_HEADER + ' token found');
           }
           this.user = credentials;
           resolve();
-      }, (err: HttpErrorResponse) => {
-        this.authenticate = false;
-        console.log(err);
-        reject(err);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.authenticate = false;
+          console.log(err);
+          reject(err);
+        }
       });
     });
     return promise;
   }
 
   logout() {
-    if (this.isAuthenticated() ) {
+    if (this.isAuthenticated()) {
       localStorage.clear();
       this.user = {username: 'User Api Application', password: ''};
       this.authenticate = false;
@@ -55,15 +58,16 @@ export class AuthJWTManagementService {
   isAuthenticated() {
       return this.authenticate && this.getToken() !== '';
   }
-  setToken(token) {
-      localStorage.setItem(this.AUTH_TOKEN_HEADER, token);
+
+  setToken(token: string | null) {
+      if (token) {
+        localStorage.setItem(this.AUTH_TOKEN_HEADER, token);
+      }
   }
 
   getToken() {
-      if (localStorage.getItem(this.AUTH_TOKEN_HEADER) != null) {
-        return localStorage.getItem(this.AUTH_TOKEN_HEADER);
-      }
-      return '';
+      const token = localStorage.getItem(this.AUTH_TOKEN_HEADER);
+      return token !== null ? token : '';
   }
 
   getUser() {

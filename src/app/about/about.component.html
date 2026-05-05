@@ -62,7 +62,9 @@
                     <i class="fa fa-globe"></i>          
                   </div>                        
                   <select data-placeholder="Choose country" class="C_Country_Modal form-control" id="C_Country" name="C_Country" data-bv-field="C_Country">
-                    <option *ngFor="let country of countries" value="{{ country[0] }}">{{ country[1] }}</option>
+                    @for (country of countries; track country[0]) {
+                      <option value="{{ country[0] }}">{{ country[1] }}</option>
+                    }
                   </select>
                 </div>
                 <small data-bv-validator="callback" data-bv-validator-for="C_Country" class="help-block" style="display: none;">Choose one</small>

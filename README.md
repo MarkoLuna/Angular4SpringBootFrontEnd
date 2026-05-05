@@ -1,29 +1,26 @@
-# SpringApiApp
+# Angular 21 Spring Boot Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.2.2.
+This repository contains the frontend application for a Spring Boot REST API built with **Angular 21**.
 
-## Development server
+## Project Structure
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+The Angular application lives at the root of the repository.
 
-## Code scaffolding
+## Development Server
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|module`.
+To run the application locally, use the Angular CLI or npm:
+
+```bash
+npm install
+npm start
+```
+
+Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files. Ensure that your Spring Boot backend API is running concurrently (default is `http://127.0.0.1:8080/SpringBootRestApi/api/user/`).
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+Run `npm run build` or `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
+## Further Help
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
-"# Angular4SpringBootFrontEnd" 
+To get more help on the Angular CLI, use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

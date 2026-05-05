@@ -1,22 +1,19 @@
 import { User } from './../user';
 import { Alerts } from './../alerts';
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { RequestOptions } from '@angular/http';
-import { RequestOptionsArgs } from '@angular/http';
-
-import { HttpHeaders, HttpResponseBase, HttpErrorResponse } from '@angular/common/http';
-
-import { Http, Response, Headers } from '@angular/http';
-import 'rxjs/Rx';
+import { HttpClient, HttpHeaders, HttpResponseBase } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 import { AuthJWTManagementService } from './../auth-jwtmanagement.service';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 declare var $:any;
 
 @Component({
   selector: 'app-main',
+  standalone: true,
+  imports: [FormsModule, CommonModule],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
@@ -24,8 +21,8 @@ export class MainComponent implements OnInit {
 
   title = 'Spring Boot Rest Api App ';
   baseUrl = 'http://127.0.0.1:8080/SpringBootRestApi/api/user/';
-  userList: User[];
-  user: User;
+  userList!: User[];
+  user!: User | null;
 
   visibleAlert: Boolean = false;
   message: String = '';
@@ -72,11 +69,14 @@ export class MainComponent implements OnInit {
           .set('Accept', 'application/json') 
         ,withCredentials: true
       };
-    this.http.get(this.baseUrl, data).subscribe((data: User[]) => {
-      // console.log(data);
-      this.userList = data;
-    }, (err: HttpResponseBase) => {
-      console.log(err);
+    this.http.get<User[]>(this.baseUrl, data).subscribe({
+      next: (data: User[]) => {
+        // console.log(data);
+        this.userList = data;
+      },
+      error: (err: HttpResponseBase) => {
+        console.log(err);
+      }
     });
   }
 
@@ -85,24 +85,24 @@ export class MainComponent implements OnInit {
   }
 
   createUser() {
-    console.log('createUser');
+    // console.log('createUser');
 
-    this.http.post(this.baseUrl, this.user).subscribe((data: User) => {
+    this.http.post<User>(this.baseUrl, this.user).subscribe((data: User) => {
       this.obtainAllUsers();
       this.cancel();
       this.showAlert('User ' + data.name + ' Created successfully', Alerts.ALERT_TYPE_SUCCESS);
     });
   }
 
-  deleteUser(user) {
-    this.http.delete(this.baseUrl + user.id).subscribe((data: User) => {
+  deleteUser(user: User) {
+    this.http.delete<User>(this.baseUrl + user.id).subscribe((data: User) => {
       this.obtainAllUsers();
       this.showAlert('User ' + user.name + ' Deleted successfully', Alerts.ALERT_TYPE_INFO);
     });
   }
 
   updateUser() {
-    this.http.put(this.baseUrl + this.user.id, this.user).subscribe((data: User) => {
+    this.http.put<User>(this.baseUrl + this.user!.id, this.user).subscribe((data: User) => {
       console.log(data);
       this.obtainAllUsers();
       this.cancel();
@@ -110,7 +110,7 @@ export class MainComponent implements OnInit {
     });
   }
 
-  viewUser(user) {
+  viewUser(user: User) {
     this.checkAuth();
     
     var data = {
@@ -121,13 +121,13 @@ export class MainComponent implements OnInit {
         ,withCredentials: true
       };
 
-    this.http.get(this.baseUrl + user.id, data).subscribe((data: User) => {
+    this.http.get<User>(this.baseUrl + user.id, data).subscribe((data: User) => {
       console.log(data);
       this.user = data;
     });
   }
 
-  showAlert(message, typeAlert) {
+  showAlert(message: string, typeAlert: Alerts) {
     this.message = message;
     this.visibleAlert = true;
 

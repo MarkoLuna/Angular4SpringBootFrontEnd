@@ -1,11 +1,14 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 import { AuthJWTManagementService } from './../auth-jwtmanagement.service';
 
 @Component({
   selector: 'app-auth',
+  standalone: true,
+  imports: [FormsModule],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
@@ -23,7 +26,7 @@ export class AuthComponent implements OnInit {
   ngOnInit() {
   }
 
-  login(event) {
+  login(event: Event) {
     event.preventDefault();
 
     if (this.user === '' || this.password === '') {

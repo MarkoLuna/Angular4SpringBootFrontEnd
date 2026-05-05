@@ -1,6 +1,6 @@
 export class User {
-    id: number;
-    name: String;
-    age: number;
-    salaly: number;
+    id!: number;
+    name!: String;
+    age!: number;
+    salary!: number;
 }
