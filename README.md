@@ -1,4 +1,4 @@
-# Angular 21 Spring Boot Frontend
+# Angular Spring Boot Frontend
 
 This repository contains the frontend application for a Spring Boot REST API built with **Angular 21**.
 

@@ -7,13 +7,30 @@ import { CommonModule } from '@angular/common';
 
 import { AuthJWTManagementService } from './../auth-jwtmanagement.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 declare var $:any;
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [
+    FormsModule, 
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTableModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSnackBarModule
+  ],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
