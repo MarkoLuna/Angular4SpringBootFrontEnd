@@ -1,12 +1,26 @@
-# Angular Spring Boot Frontend
+# User Management Angular App
 
-This repository contains the frontend application for a Spring Boot REST API built with **Angular 21**.
+This repository contains the **User Management** frontend application built with **Angular 21**, backed by a Spring Boot REST API.
+
+## Purpose
+
+This application provides a comprehensive **User Management** interface that allows administrators and users to:
+
+- **View** a list of all registered users
+- **Create** new user accounts
+- **Update** existing user information
+- **Delete** user records
+
+It serves as the frontend layer for the Spring Boot REST API, communicating over HTTP to perform CRUD operations on user data.
 
 ## Project Structure
 
 The Angular application lives at the root of the repository.
 
 ## Development Server
+
+**Prerequisites:** 
+- `npm` version `11.10.0` or higher is required. This is necessary to support the modern security features (`min-release-age` and `ignore-scripts`) configured in the `.npmrc` file.
 
 To run the application locally, use the Angular CLI or npm:
 
